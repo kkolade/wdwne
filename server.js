@@ -28,6 +28,9 @@ const server = http.createServer((req, res) => {
     case '/about':
       serveStaticFile(res, '/public/about.html');
       break;
+    case '/images/logo.png':
+      serveStaticFile(res, '/public/images/logo.png', 'image/png');
+      break;
     default:
       serveStaticFile(res, '/public/404.html', 'text/html', 404);
       break;
