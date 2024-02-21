@@ -1,26 +1,35 @@
 const http = require('http');
+const fs = require('fs');
 const port = process.env.PORT || 3000;
+
+const serveStaticFile = (
+  res,
+  path,
+  contentType = 'text/html',
+  responseCode = 200
+) => {
+  fs.readFile(__dirname + path, (err, data) => {
+    if (err) {
+      res.writeHead(500, { 'content-Type': 'text/plain' });
+      res.end('Internal server error');
+    }
+
+    res.writeHead(responseCode, { 'content-Type': contentType });
+    res.end(data);
+  });
+};
 
 const server = http.createServer((req, res) => {
   const path = req.url.replace(/\/?(?:\?.*)?$/, '').toLowerCase();
   switch (path) {
     case '':
-      res.writeHead(200, {
-        'content-Type': 'text/plain',
-      });
-      res.end('Homepage');
+      serveStaticFile(res, '/public/index.html');
       break;
     case '/about':
-      res.writeHead(200, {
-        'content-Type': 'text/plain',
-      });
-      res.end('About page');
+      serveStaticFile(res, '/public/about.html');
       break;
     default:
-      res.writeHead(404, {
-        'content-Type': 'text/plain',
-      });
-      res.end('404: Page not found');
+      serveStaticFile(res, '/public/404.html', 'text/html', 404);
       break;
   }
 });
